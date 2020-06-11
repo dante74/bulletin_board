@@ -1,9 +1,12 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const announcementRoutes = require('./api/routes/announcement')
 const userRoutes = require('./api/routes/user')
+
+mongoose.connect('mongodb+srv://dante:' + process.env.MONGO_ATLAS_PASSWD + '@cluster0-kkeyt.mongodb.net/<dbname>?retryWrites=true&w=majority');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
