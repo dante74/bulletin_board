@@ -8,10 +8,16 @@ router.get('/', (req, res, next) => {
 })
 
 router.post('/', (req, res, next) => {
-    res.status(200).json({
-        message: 'POST requests to /announcement',
+    const announcement = {
+        name: req.body.name,
+        category: req.body.category,
+    }
+    res.status(201).json({
+        message: 'Handling POST request to /announcement',
+        createdAnnouncement: announcement
     })
 })
+
 
 router.get('/:announcementID', (req, res, next) => {
     const { announcementID } = req.params;

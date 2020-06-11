@@ -1,7 +1,12 @@
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
+
 const announcementRoutes = require('./api/routes/announcement')
 const userRoutes = require('./api/routes/user')
+
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 app.use('/announcement', announcementRoutes);
 app.use('/user', userRoutes);
