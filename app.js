@@ -6,7 +6,11 @@ const mongoose = require('mongoose');
 const announcementRoutes = require('./api/routes/announcement')
 const userRoutes = require('./api/routes/user')
 
-mongoose.connect('mongodb+srv://dante:' + process.env.MONGO_ATLAS_PASSWD + '@cluster0-kkeyt.mongodb.net/<dbname>?retryWrites=true&w=majority');
+mongoose.connect('mongodb+srv://dante:' + process.env.MONGO_ATLAS_PASSWD + '@cluster0-kkeyt.mongodb.net/<dbname>?retryWrites=true&w=majority',
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
