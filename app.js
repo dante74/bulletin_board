@@ -39,7 +39,7 @@ app.use((req, res, next) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-    console.log('It works');
+    console.log('It workss');
 })
 
 

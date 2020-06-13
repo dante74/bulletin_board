@@ -6,6 +6,7 @@ const Announcement = require('../models/announcement');
 
 router.get('/', (req, res, next) => {
     Announcement.find()
+        .select('name body category author')
         .exec()
         .then(docs => {
             console.log(docs);

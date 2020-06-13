@@ -27,6 +27,38 @@ router.get('/:userID', (req, res, next) => {
     })
 })
 
+router.post('/login', (req, res, next) => {
+    // {
+    //     "name": "Legolas",
+    //     "password": "Legolas"
+    // }
+    User.find({ name: req.body.name })
+        .exec()
+        .then(user => {
+            if (user.length < 1) {
+                return res.status(404).json({
+                    message: 'Authorization Failed',
+                });
+            }
+            if (user[0].password === req.body.password) {
+                return res.status(200).json({
+                    message: 'Authorization Successfull'
+                })
+            } else {
+                return res.status(401).json({
+                    message: 'Authorization failed'
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+});
+
+
 router.post('/', (req, res, next) => {
 
     const user = new User({
