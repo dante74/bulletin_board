@@ -48,6 +48,7 @@ router.post('/', (req, res, next) => {
 
 router.get('/:announcementID', (req, res, next) => {
     const { announcementID } = req.params;
+    console.log(typeof (announcementID));
     Announcement.findById(announcementID)
         .exec()
         .then(doc => {
@@ -73,6 +74,9 @@ router.patch('/:announcementID', (req, res, next) => {
     for (const ops of req.body) {
         updateOps[ops.changeName] = ops.value;
     }
+    // [
+    //     { "changeName" : "body", "value" : "Nie ma tego lata komarów"}
+    // ]
     Announcement.update({ _id: announcementID }, { $set: updateOps })
         .exec()
         .then(result => {

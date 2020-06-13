@@ -3,7 +3,7 @@ const announcementSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     name: String,
     body: String,
-    category: String,
+    category: { type: String, require: true },
     author: String
 
 })
