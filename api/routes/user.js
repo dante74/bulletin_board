@@ -1,11 +1,52 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
-
+const checkAuth = require('../middleware/check-auth');
 const User = require('../models/user');
 
 
-router.get('/', (req, res, next) => {
+// const restrict = (req, res, next) => {
+//     let auth = req.headers.authorization;
+//     if (!auth) {
+//         next(new Error('Brak autoryzacji'));
+//     } else {
+//         let parts = auth.split(' ');
+//         console.log(parts);
+//         let authorization = new Buffer.from(parts[1], 'base64').toString().split(':');
+//         let name = authorization[0];
+//         let pass = authorization[1]
+//         // console.log(name);
+//         // console.log(pass);
+//         User.find({ name })
+//             .exec()
+//             .then(user => {
+//                 if (user.length < 1) {
+//                     return res.status(404).json({
+//                         message: 'Authorization Failed',
+//                     });
+//                 }
+//                 if (user[0].password === pass) {
+//                     return res.status(200).json({
+//                         message: 'Authorization Successfull'
+//                     })
+//                 } else {
+//                     return res.status(401).json({
+//                         message: 'Authorization failed'
+//                     })
+//                 }
+//             })
+//             .catch(err => {
+//                 console.log(err);
+//                 res.status(500).json({
+//                     error: err
+//                 });
+//             });
+
+//     }
+// }
+
+
+router.get('/', checkAuth, (req, res, next) => {
     User.find()
         .exec()
         .then(docs => {
@@ -14,13 +55,13 @@ router.get('/', (req, res, next) => {
         })
         .catch(err => {
             console.log(err);
-            res.status(500).json({
+            res.status(501).json({
                 error: err,
             })
         });
 })
 
-router.get('/:userID', (req, res, next) => {
+router.get('/:userID',checkAuth, (req, res, next) => {
     const { userID } = req.params;
     res.status(200).json({
         message: `GET requests to special /user ${userID}`,
@@ -32,6 +73,7 @@ router.post('/login', (req, res, next) => {
     //     "name": "Legolas",
     //     "password": "Legolas"
     // }
+
     User.find({ name: req.body.name })
         .exec()
         .then(user => {
