@@ -84,18 +84,37 @@ router.patch('/:announcementID', checkAuth, (req, res, next) => {
     // [
     //     { "changeName" : "body", "value" : "Nie ma tego lata komarów"}
     // ]
-    Announcement.update({ _id: announcementID }, { $set: updateOps })
+    let auth = req.headers.authorization;
+    let parts = auth.split(' ');
+    //console.log(parts);
+    let authorization = new Buffer.from(parts[1], 'base64').toString().split(':');
+    let name = authorization[0];
+
+    Announcement.findById(announcementID)
         .exec()
-        .then(result => {
-            console.log(result);
-            res.status(200).json(result);
+        .then(doc => {
+            if (doc.author === name || name === "admin") {
+
+                Announcement.update({ _id: announcementID }, { $set: updateOps })
+                    .exec()
+                    .then(result => {
+                        console.log(result);
+                        res.status(200).json(result);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(500).json({
+                            error: err,
+                        })
+                    });
+            } else {
+                res.status(500).json({
+                    error: "No athorized to this operation",
+                })
+            }
+
         })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                error: err,
-            })
-        });
+
 })
 
 router.delete('/:announcementID', checkAuth, (req, res, next) => {
@@ -103,7 +122,7 @@ router.delete('/:announcementID', checkAuth, (req, res, next) => {
 
     let auth = req.headers.authorization;
     let parts = auth.split(' ');
-    console.log(parts);
+    //console.log(parts);
     let authorization = new Buffer.from(parts[1], 'base64').toString().split(':');
     let name = authorization[0];
 
@@ -114,11 +133,11 @@ router.delete('/:announcementID', checkAuth, (req, res, next) => {
                 Announcement.remove({ _id: announcementID })
                     .exec()
                     .then(result => {
-                        console.log(result);
+                        //console.log(result);
                         res.status(200).json(result);
                     })
                     .catch(err => {
-                        console.log(err);
+                        //console.log(err);
                         res.status(500).json({
                             error: err,
                         })

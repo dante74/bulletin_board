@@ -5,47 +5,6 @@ const checkAuth = require('../middleware/check-auth');
 const User = require('../models/user');
 
 
-// const restrict = (req, res, next) => {
-//     let auth = req.headers.authorization;
-//     if (!auth) {
-//         next(new Error('Brak autoryzacji'));
-//     } else {
-//         let parts = auth.split(' ');
-//         console.log(parts);
-//         let authorization = new Buffer.from(parts[1], 'base64').toString().split(':');
-//         let name = authorization[0];
-//         let pass = authorization[1]
-//         // console.log(name);
-//         // console.log(pass);
-//         User.find({ name })
-//             .exec()
-//             .then(user => {
-//                 if (user.length < 1) {
-//                     return res.status(404).json({
-//                         message: 'Authorization Failed',
-//                     });
-//                 }
-//                 if (user[0].password === pass) {
-//                     return res.status(200).json({
-//                         message: 'Authorization Successfull'
-//                     })
-//                 } else {
-//                     return res.status(401).json({
-//                         message: 'Authorization failed'
-//                     })
-//                 }
-//             })
-//             .catch(err => {
-//                 console.log(err);
-//                 res.status(500).json({
-//                     error: err
-//                 });
-//             });
-
-//     }
-// }
-
-
 router.get('/', checkAuth, (req, res, next) => {
     User.find()
         .exec()
@@ -61,7 +20,7 @@ router.get('/', checkAuth, (req, res, next) => {
         });
 })
 
-router.get('/:userID',checkAuth, (req, res, next) => {
+router.get('/:userID', checkAuth, (req, res, next) => {
     const { userID } = req.params;
     res.status(200).json({
         message: `GET requests to special /user ${userID}`,

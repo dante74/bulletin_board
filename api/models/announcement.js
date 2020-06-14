@@ -4,7 +4,8 @@ const announcementSchema = mongoose.Schema({
     name: { type: String, require: true },
     body: String,
     category: { type: String, require: true },
-    author: { type: String, require: true }
+    author: { type: String, require: true },
+    date: { type: Date }
 
 })
 
