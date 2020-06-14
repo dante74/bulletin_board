@@ -4,9 +4,13 @@ const mongoose = require('mongoose');
 
 const Announcement = require('../models/announcement');
 
+const checkAuth = require('../middleware/check-auth');
+
 router.get('/', (req, res, next) => {
-    Announcement.find()
-        .select('name body category author')
+    console.log(req.query);
+    //localhost:3000/announcement/?author=Gandalf
+    Announcement.find(req.query)
+        .select('name body category author date')
         .exec()
         .then(docs => {
             console.log(docs);
@@ -27,7 +31,8 @@ router.post('/', (req, res, next) => {
         name: req.body.name,
         body: req.body.body,
         category: req.body.category,
-        author: req.body.author
+        author: req.body.author || 'anonymous',
+        date: new Date()
     });
 
     announcement
@@ -49,11 +54,11 @@ router.post('/', (req, res, next) => {
 
 router.get('/:announcementID', (req, res, next) => {
     const { announcementID } = req.params;
-    console.log(typeof (announcementID));
+    //console.log(typeof (announcementID));
     Announcement.findById(announcementID)
         .exec()
         .then(doc => {
-            console.log("From database", doc);
+            //console.log("From database", doc);
             if (doc) {
                 res.status(200).json(doc);
             } else {
@@ -69,7 +74,8 @@ router.get('/:announcementID', (req, res, next) => {
         });
 })
 
-router.patch('/:announcementID', (req, res, next) => {
+
+router.patch('/:announcementID', checkAuth, (req, res, next) => {
     const { announcementID } = req.params;
     const updateOps = {};
     for (const ops of req.body) {
@@ -92,19 +98,38 @@ router.patch('/:announcementID', (req, res, next) => {
         });
 })
 
-router.delete('/:announcementID', (req, res, next) => {
+router.delete('/:announcementID', checkAuth, (req, res, next) => {
     const { announcementID } = req.params;
-    Announcement.remove({ _id: announcementID })
+
+    let auth = req.headers.authorization;
+    let parts = auth.split(' ');
+    console.log(parts);
+    let authorization = new Buffer.from(parts[1], 'base64').toString().split(':');
+    let name = authorization[0];
+
+    Announcement.findById(announcementID)
         .exec()
-        .then(result => {
-            console.log(result);
-            res.status(200).json(result);
+        .then(doc => {
+            if (doc.author === name || name === "admin") {
+                Announcement.remove({ _id: announcementID })
+                    .exec()
+                    .then(result => {
+                        console.log(result);
+                        res.status(200).json(result);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        res.status(500).json({
+                            error: err,
+                        })
+                    });
+            } else {
+                res.status(500).json({
+                    error: "No athorized to this operation",
+                })
+            }
+
         })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                error: err,
-            })
-        });
+
 })
 module.exports = router;
