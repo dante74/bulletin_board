@@ -31,11 +31,11 @@ app.use((error, req, res, next) => {
     });
 })
 
-app.use((req, res, next) => {
-    res.status(200).json({
-        message: "It works",
-    });
-});
+// app.use((req, res, next) => {
+//     res.status(200).json({
+//         message: "It works",
+//     });
+// });
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
